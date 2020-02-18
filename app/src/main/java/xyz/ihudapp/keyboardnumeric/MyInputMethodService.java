@@ -14,6 +14,8 @@ import java.io.Console;
 public class MyInputMethodService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     InputConnection inputConnection;
     String frase = "";
+    String palavraExcluida = "AU";
+
     @Override
     public View onCreateInputView() {
         KeyboardView keyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
@@ -35,10 +37,10 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
         frase += String.valueOf(code);
         Log.i("TEXTO", frase);
 
-        if(frase.contains("AU")){
-            inputConnection.deleteSurroundingText(2, 0);
-            frase = frase.replaceAll("AU", "");
-            
+        if(frase.contains(palavraExcluida)){
+            inputConnection.deleteSurroundingText(palavraExcluida.length(), 0);
+            frase = frase.replaceAll(palavraExcluida, "");
+            inputConnection.commitText(" PROIBIDO ", frase.length());
         }
     }
 
