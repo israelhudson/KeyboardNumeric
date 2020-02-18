@@ -12,53 +12,44 @@ import android.widget.Toast;
 import java.io.Console;
 
 public class MyInputMethodService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
-    Keyboard keyboard;
-    KeyboardView keyboardView;
     InputConnection inputConnection;
-    char code;
-    CharSequence selectedText;
     String frase = "";
-
     @Override
     public View onCreateInputView() {
-        keyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
-        keyboard = new Keyboard(this, R.xml.number_pad);
+        KeyboardView keyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard_view, null);
+        Keyboard keyboard = new Keyboard(this, R.xml.number_pad);
         keyboardView.setKeyboard(keyboard);
         keyboardView.setOnKeyboardActionListener(this);
-        inputConnection = getCurrentInputConnection();
-
         return keyboardView;
     }
 
     @Override
     public void onPress(int i) {
+
+
     }
 
     @Override
     public void onRelease(int i) {
-        Log.i("TEXTO", frase);
+        char code = (char) i;
         frase += String.valueOf(code);
+        Log.i("TEXTO", frase);
 
         if(frase.contains("AU")){
-            Log.i("TEXTO", "noassa");
-            frase = frase.replaceAll("AU", " NOME FEIO");
             inputConnection.deleteSurroundingText(2, 0);
-
-        }else{
-            inputConnection.commitText("", 1);
+            frase = frase.replaceAll("AU", "");
+            
         }
-        inputConnection.finishComposingText();
-
     }
 
     @Override
     public void onKey(int primatyCode, int[] keyCodes) {
+        inputConnection = getCurrentInputConnection();
 
         if (inputConnection != null) {
-
             switch(primatyCode) {
                 case Keyboard.KEYCODE_DELETE :
-                    selectedText = inputConnection.getSelectedText(0);
+                    CharSequence selectedText = inputConnection.getSelectedText(0);
 
                     if (TextUtils.isEmpty(selectedText)) {
                         inputConnection.deleteSurroundingText(1, 0);
@@ -67,8 +58,9 @@ public class MyInputMethodService extends InputMethodService implements Keyboard
                     }
 
                     break;
+
                 default :
-                    code = (char) primatyCode;
+                    char code = (char) primatyCode;
                     inputConnection.commitText(String.valueOf(code), 1);
             }
         }
